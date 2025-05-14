@@ -591,7 +591,7 @@ TEST(LowSpeedTests, SetLowSpeedTest) {
     Url url{server->GetBaseUrl() + "/hello.html"};
     Session session;
     session.SetUrl(url);
-    session.SetLowSpeed({1, 1});
+    session.SetLowSpeed({1, std::chrono::seconds(1)});
     Response response = session.Get();
     std::string expected_text{"Hello world!"};
     EXPECT_EQ(expected_text, response.text);
@@ -714,6 +714,23 @@ TEST(BodyTests, SetBodyValueTest) {
     session.SetBody(body);
     Response response = session.Post();
     std::string expected_text{
+            "{\n"
+            "  \"x\": 5\n"
+            "}"};
+    EXPECT_EQ(expected_text, response.text);
+    EXPECT_EQ(url, response.url);
+    EXPECT_EQ(std::string{"application/json"}, response.header["content-type"]);
+    EXPECT_EQ(201, response.status_code);
+    EXPECT_EQ(ErrorCode::OK, response.error.code);
+}
+
+TEST(BodyTests, SetBodyViewTest) {
+    const Url url{server->GetBaseUrl() + "/url_post.html"};
+    Session session;
+    session.SetUrl(url);
+    session.SetBodyView(BodyView{"x=5"});
+    Response response = session.Post();
+    const std::string expected_text{
             "{\n"
             "  \"x\": 5\n"
             "}"};
