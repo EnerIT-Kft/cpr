@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 3.15)
-project(cpr VERSION 1.14.1 LANGUAGES CXX)
+cmake_minimum_required(VERSION 3.18)
+project(cpr VERSION 1.15.0 LANGUAGES CXX)
 
 math(EXPR cpr_VERSION_NUM "${cpr_VERSION_MAJOR} * 0x10000 + ${cpr_VERSION_MINOR} * 0x100 + ${cpr_VERSION_PATCH}" OUTPUT_FORMAT HEXADECIMAL)
 configure_file("${cpr_SOURCE_DIR}/cmake/cprver.h.in" "${cpr_BINARY_DIR}/cpr_generated_includes/cpr/cprver.h")
@@ -384,8 +384,8 @@ if(CPR_BUILD_TESTS)
     FetchContent_Declare(mongoose 
                          URL                    https://github.com/cesanta/mongoose/archive/7.7.tar.gz
                          URL_HASH               SHA256=4e5733dae31c3a81156af63ca9aa3a6b9b736547f21f23c3ab2f8e3f1ecc16c0 # the hash for 7.7.tar.gz
-                         USES_TERMINAL_DOWNLOAD TRUE)   # <---- This is needed only for Ninja to show download progress
-    # We can not use FetchContent_MakeAvailable, since we need to patch mongoose to use CMake
+                         USES_TERMINAL_DOWNLOAD TRUE # This is needed only for Ninja to show download progress
+                         SOURCE_SUBDIR          "?") # Nonexistent directory to prevent FetchContent_MakeAvailable from calling add_subdirectory and duplicating the mongoose target
     if (NOT mongoose_POPULATED)
         FetchContent_MakeAvailable(mongoose)
 
